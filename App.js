@@ -13,7 +13,8 @@ function HomeScreen({ navigation }) {
       justifyContent: "space-between",
       paddingVertical: 16,
       alignItems: "center",
-      marginHorizontal: 40,
+      paddingHorizontal: 40,
+      backgroundColor: "#E3E3E3",
     },
     item: {
       padding: 16,
