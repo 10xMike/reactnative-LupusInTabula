@@ -1,86 +1,104 @@
-import { Button, Text, View, StyleSheet, TouchableOpacity } from "react-native";
+import React, { useEffect } from "react";
+import {
+  Button,
+  Text,
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  Animated,
+  Easing,
+} from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import * as SplashScreen from "expo-splash-screen";
 import { useFonts } from "expo-font";
-import { useEffect } from "react";
+
+const commonStyles = {
+  container: {
+    flex: 1,
+    flexDirection: "column",
+    alignItems: "center",
+    backgroundColor: "#E3E3E3",
+    padding: 60,
+  },
+  wrapper: {
+    flex: 1,
+    flexDirection: "column",
+    justifyContent: "space-between",
+    width: 300,
+  },
+  item: {
+    borderRadius: 8,
+    alignItems: "center",
+  },
+};
+
+const textStyles = {
+  title: {
+    color: "#050505",
+    textAlign: "center",
+    fontFamily: "Play-Bold",
+    textAlign: "center",
+  },
+  subtitle: {
+    color: "#050505",
+    textAlign: "center",
+    fontFamily: "Play-Regular",
+    textAlign: "center",
+  },
+  button: {
+    color: "#050505",
+    textAlign: "center",
+    fontFamily: "Play-Bold",
+    textAlign: "center",
+  },
+};
+
+const buttonStyles = {
+  primary: {
+    paddingVertical: 36,
+    paddingHorizontal: 24,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#FFF",
+    borderWidth: 4,
+    width: 300,
+  },
+  secondary: {
+    width: 300,
+    padding: 16,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#8F8E8A",
+  },
+};
 
 function HomeScreen({ navigation }) {
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      flexDirection: "column",
-      justifyContent: "space-between",
-      paddingVertical: 16,
-      alignItems: "center",
-      paddingHorizontal: 40,
-      backgroundColor: "#E3E3E3",
-    },
-    item: {
-      padding: 16,
-      marginBottom: 8,
-      borderRadius: 8,
-      alignItems: "center",
-    },
-  });
-
   return (
-    <View style={styles.container}>
-      <View style={styles.item}>
-        <Text
-          style={{
-            fontFamily: "Play-Bold",
-            color: "#050505",
-            textAlign: "center",
-            fontSize: 44,
-          }}
-        >
-          LUPUS IN TABULA
-        </Text>
-      </View>
-
-      <View style={styles.item}>
-        <Text
-          style={{
-            fontFamily: "Play-Regular",
-            textAlign: "center",
-            color: "#050505",
-            textAlign: "center",
-            fontSize: 25,
-            flexDirection: "column",
-            justifyContent: "center",
-            alignSelf: "stretch",
-          }}
-        >
-          Fare il master non è mai stato così facile.
-        </Text>
-      </View>
-
-      <View style={styles.item}>
-        <TouchableOpacity
-          style={{
-            marginBottom: 50,
-            paddingVertical: 40,
-            justifyContent: "center",
-            alignItems: "center",
-            backgroundColor: "#3E4347",
-            paddingHorizontal: 10,
-          }}
-          onPress={() => navigation.navigate("Profile")}
-        >
-          <Text
-            style={{
-              color: "#FFFFFF",
-              width: 279,
-              textAlign: "center",
-              fontFamily: "Play-Regular",
-              textAlign: "center",
-              fontSize: 25,
-            }}
-          >
-            INCOMINCIAMO!
+    <View style={commonStyles.container}>
+      <View style={commonStyles.wrapper}>
+        <View style={commonStyles.item}>
+          <Text style={{ ...textStyles.title, fontSize: 44 }}>
+            LUPUS IN TABULA
           </Text>
-        </TouchableOpacity>
+        </View>
+
+        <View style={commonStyles.item}>
+          <Text style={{ ...textStyles.subtitle, fontSize: 25 }}>
+            Fare il master non è mai stato così facile.
+          </Text>
+        </View>
+
+        <View style={commonStyles.item}>
+          <TouchableOpacity
+            style={{ ...buttonStyles.primary }}
+            onPress={() => navigation.navigate("Profile")}
+          >
+            <Text style={{ ...textStyles.button, fontSize: 24 }}>
+              INCOMINCIAMO
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
@@ -88,32 +106,141 @@ function HomeScreen({ navigation }) {
 
 function ProfileScreen({ navigation }) {
   return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <Button
-        title="Go to Notifications"
-        onPress={() => navigation.navigate("Notifications")}
-      />
-      <Button title="Go back" onPress={() => navigation.goBack()} />
+    <View style={commonStyles.container}>
+      <View style={commonStyles.wrapper}>
+        <View style={commonStyles.item}>
+          <Text style={{ ...textStyles.title, fontSize: 44 }}>GIOCO</Text>
+        </View>
+        {[
+          "TEMPISTICHE",
+          "PERSONAGGI",
+          "NOMI GIOCATORI",
+          "SALVA",
+          "TEMPLATES",
+        ].map((label, index) => (
+          <View key={index} style={commonStyles.item}>
+            <TouchableOpacity
+              style={{ ...buttonStyles.secondary }}
+              onPress={() => navigation.navigate("Profile")}
+            >
+              <Text
+                style={{ ...textStyles.subtitle, fontSize: 25, color: "#fff" }}
+              >
+                {label}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        ))}
+
+        <View style={commonStyles.item}>
+          <TouchableOpacity
+            style={{ ...buttonStyles.primary, width: 300 }}
+            onPress={() => navigation.navigate("Notifications")}
+          >
+            <Text style={{ ...textStyles.button, fontSize: 24 }}>PLAY</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
     </View>
   );
 }
 
 function NotificationsScreen({ navigation }) {
-  return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <Button
-        title="Go to Settings"
-        onPress={() => navigation.navigate("Settings")}
+  const FloatingDiv = () => {
+    const translateY = new Animated.Value(0);
+
+    const floatingAnimation = () => {
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(translateY, {
+            toValue: -20,
+            duration: 1500,
+            easing: Easing.inOut(Easing.ease),
+            useNativeDriver: true,
+          }),
+          Animated.timing(translateY, {
+            toValue: 0,
+            duration: 1500,
+            easing: Easing.inOut(Easing.ease),
+            useNativeDriver: true,
+          }),
+        ])
+      ).start();
+    };
+
+    useEffect(() => {
+      floatingAnimation();
+    }, []);
+
+    return (
+      <Animated.View
+        style={[
+          styles.float,
+          {
+            transform: [{ translateY: translateY }],
+          },
+        ]}
       />
-      <Button title="Go back" onPress={() => navigation.goBack()} />
+    );
+  };
+
+  const styles = StyleSheet.create({
+    float: {
+      width: 150,
+      height: 150,
+      backgroundColor: "#3E4347",
+      borderRadius: 75,
+    },
+  });
+
+  return (
+    <View style={commonStyles.container}>
+      <View style={commonStyles.wrapper}>
+        <View style={commonStyles.item}>
+          <Text style={{ ...textStyles.title, fontSize: 44 }}>DAY 1</Text>
+        </View>
+        <View style={commonStyles.item}>
+          <FloatingDiv />
+        </View>
+        <View style={commonStyles.item}>
+          <Text style={{ ...textStyles.subtitle, fontSize: 24 }}>
+            {"Attendi mentre mischiamo le carte."}
+          </Text>
+          <Button
+            onPress={() => navigation.navigate("Settings")}
+            title="Go to Settings"
+          />
+        </View>
+      </View>
     </View>
   );
 }
 
 function SettingsScreen({ navigation }) {
   return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <Button title="Go back" onPress={() => navigation.goBack()} />
+    <View style={commonStyles.container}>
+      <View style={commonStyles.wrapper}>
+        <View style={commonStyles.item}>
+          <Text style={{ ...textStyles.title, fontSize: 44 }}>DAY 1</Text>
+        </View>
+        <View style={commonStyles.item}>
+          <Text style={{ ...textStyles.subtitle, fontSize: 24 }}>
+            PLACEHOLDER
+          </Text>
+        </View>
+        <View style={commonStyles.item}>
+          <TouchableOpacity
+            style={{ ...buttonStyles.secondary }}
+            onPress={() => navigation.navigate("Profile")}
+          >
+            <Text
+              style={{ ...textStyles.subtitle, fontSize: 25, color: "#fff" }}
+            >
+              AVANTI
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
     </View>
   );
 }
@@ -145,10 +272,10 @@ export default function App() {
   });
 
   if (!fontsLoaded) {
-    return undefined;
-  } else {
-    SplashScreen.hideAsync();
+    return null;
   }
+
+  SplashScreen.hideAsync();
 
   return (
     <NavigationContainer>
